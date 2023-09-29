@@ -89,6 +89,10 @@ namespace _00Project1_Protmusis_
                         Console.Write("Pasirinkite klausimo kategorija: ");
 
                         genreSelection = Console.ReadLine();
+                        if (genreSelection == "q")
+                        {
+                            break;
+                        }
 
                         genreLetter = numberToGenre(genreSelection);
 
@@ -99,6 +103,10 @@ namespace _00Project1_Protmusis_
                         {
                             Console.WriteLine("Jusu pasirinkta kategorija nebeturi klausimu, prasome pasirinkti kita kategorija:");
                             genreSelection = Console.ReadLine();
+                            if (genreSelection == "q")
+                            {
+                                break;
+                            }
                             genreLetter = numberToGenre(genreSelection);
                         }
 
@@ -202,7 +210,16 @@ namespace _00Project1_Protmusis_
             foreach (var user in usersDictionary)
             {
                 Console.WriteLine("DALYVIU REZULTATAI:");
-                Console.WriteLine($"{user.Key} - {user.Value}");
+                Console.WriteLine($"{user.Key} | {user.Value}");
+                //Reikia surusiuoti.........................
+            }
+
+            usersDictionary.OrderBy(x => x.Value);
+
+            foreach (var user in usersDictionary)
+            {
+                Console.WriteLine("DALYVIU REZULTATAI:");
+                Console.WriteLine($"{user.Key} | {user.Value}");
                 //Reikia surusiuoti.........................
             }
 
@@ -343,23 +360,6 @@ namespace _00Project1_Protmusis_
                 return 0;
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         //F - movies (Filmai)
