@@ -104,7 +104,6 @@ namespace _00Project1_Protmusis_
 
                         genreLetter = numberToGenre(genreSelection);
 
-
                         int questionCount = questionsDictionary.Keys.Count(key => key.StartsWith(genreLetter));
                         int answeredQuestionsCount = answeredQuestions.Count(key => key.StartsWith(genreLetter));
                         
@@ -245,10 +244,27 @@ namespace _00Project1_Protmusis_
             Console.WriteLine();
             Console.WriteLine("DALYVIU REZULTATAI:");
 
-            foreach (var user in usersDictionary)
+            var sortedDictionary = usersDictionary.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            int i = 1;
+            foreach (var user in sortedDictionary)
             {
-                Console.WriteLine($"{user.Key} | {user.Value}");
-                //Reikia surusiuoti.........................
+                if (i == 1)
+                {
+                    Console.WriteLine($"*{i}.{user.Key} | {user.Value}");
+                }
+                else if (i == 2)
+                {
+                    Console.WriteLine($"**{i}.{user.Key} | {user.Value}");
+                }
+                else if (i == 3)
+                {
+                    Console.WriteLine($"***{i}.{user.Key} | {user.Value}");
+                }
+                else
+                {
+                    Console.WriteLine($"{i}.{user.Key} | {user.Value}");
+                }
+                i++;
             }
 
         }
@@ -466,7 +482,7 @@ namespace _00Project1_Protmusis_
                 {"G1", "Dziudo"},
                 {"G2", "Krepšinis"},
                 {"G3", "4"},
-                {"G4", "Hamiltonas, Kanada"},
+                {"G4", "Hamiltonas"},
                 {"G5", "7"},
             };
             return dictionary;
@@ -506,8 +522,6 @@ namespace _00Project1_Protmusis_
         }
         public static Dictionary<string, int> createPointsDictionary()
         {
-
-
             Dictionary<string, int> dictionary = new Dictionary<string, int>()
             {
                 {"F1", 2},
