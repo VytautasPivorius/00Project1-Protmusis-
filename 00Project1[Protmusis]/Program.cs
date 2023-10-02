@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace _00Project1_Protmusis_
 {
@@ -90,6 +91,7 @@ namespace _00Project1_Protmusis_
                         Console.WriteLine($"---------------------------------------------------------------Question: {i+1}/{oneGameQuestionsCount}");
                         Console.WriteLine();
                         showQuestionsGenre();
+                        Console.WriteLine() ;
                         string genreSelection = "";
                         string genreTopic = "";
                         string genreLetter = "";
@@ -142,8 +144,9 @@ namespace _00Project1_Protmusis_
                         Console.WriteLine($"---------------------------------------------------------------Question: {i+1}/{oneGameQuestionsCount}");
                         showQuestion(question);
                         showOptions(options);
-
+                        Console.WriteLine();
                         //Userio spejimas
+                        Console.Write("Pasirinkite atsakyma: ");
                         string guess = Console.ReadLine().ToUpper();
 
                         int guessNumber = letterToNumber(guess);
@@ -167,6 +170,7 @@ namespace _00Project1_Protmusis_
                         oneGamePoints += pointForAnswer;
                         Console.ReadLine();
                     }
+                    //Rodomas rezultatas po atsakytu klausimu
                     Console.Clear();
                     showOneGameResult(currentUser, usersDictionary, oneGamePoints, oneGameCorrectAnswers, oneGameQuestionsCount);
                     Console.ReadLine();
@@ -244,7 +248,7 @@ namespace _00Project1_Protmusis_
             Console.WriteLine();
             Console.WriteLine("DALYVIU REZULTATAI:");
 
-            var sortedDictionary = usersDictionary.OrderBy(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            var sortedDictionary = usersDictionary.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
             int i = 1;
             foreach (var user in sortedDictionary)
             {
