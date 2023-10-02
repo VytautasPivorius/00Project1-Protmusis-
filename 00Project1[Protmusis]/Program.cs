@@ -9,6 +9,7 @@ namespace _00Project1_Protmusis_
             Dictionary<string,int> usersDictionary = new Dictionary<string,int>();
             string currentUser = "";
 
+            //Pirmas prisijungimas
             logIn(ref currentUser, ref usersDictionary);
             Thread.Sleep(1000);
             Console.Clear();
@@ -16,14 +17,15 @@ namespace _00Project1_Protmusis_
             string functionSelection = "";
             string back = "";
 
-
+            //Meniu ciklas
             while (functionSelection != "6")
             {
+                //Rodomas meniu
                 Console.Clear();
-                showMenu(currentUser);
+                showMenu(currentUser, usersDictionary);
                 functionSelection = Console.ReadLine();
 
-                if (functionSelection == "1")
+                if (functionSelection == "1") //Prisijungimas
                 {
                     Console.Clear();
                     logIn(ref currentUser, ref usersDictionary);
@@ -31,21 +33,21 @@ namespace _00Project1_Protmusis_
                     Console.Clear();
 
                 }
-                else if (functionSelection == "2")
+                else if (functionSelection == "2") //Atsijungimas
                 {
                     Console.WriteLine("Jus sekmingai atsijungete nuo paskyros!");
                     Thread.Sleep(1000);
                     Console.Clear();
                     logIn(ref currentUser, ref usersDictionary);
                 }
-                else if (functionSelection == "3")
+                else if (functionSelection == "3") //Rodomos zaidimo taisykles
                 {
                     Console.Clear();
-                    showGameRules();
+                    showGameRules(currentUser,usersDictionary);
                     backToMenu(back);
                     
                 }
-                else if (functionSelection == "4")
+                else if (functionSelection == "4") //Rodomas zaidimo rezultatai ir dalyviai
                 {
                     Console.Clear();
                     Console.WriteLine("ZAIDIMO REZULTATU IR DALYVIU PERZIURA");
@@ -58,22 +60,24 @@ namespace _00Project1_Protmusis_
                     if(function4Selection == "1")
                     {
                         Console.Clear();
-                        showUsers(usersDictionary);
+                        showUsers(usersDictionary, currentUser);
                         backToMenu(back);
                     }
                     else if (function4Selection == "2")
                     {
                         Console.Clear();
-                        showGameResult(usersDictionary);
+                        showGameResult(usersDictionary,currentUser);
                         backToMenu(back);
                     }
                 }
-                else if (functionSelection == "5")
+                else if (functionSelection == "5") //Pradedamas zaidimas
                 {
                     //////////////////////////Start game///////////////////////////////////
                     List<string> answeredQuestions = new List<string>();
-
-                    for (int i = 0; i < 10; i++)
+                    int oneGamePoints = 0;
+                    int oneGameCorrectAnswers = 0;
+                    int oneGameQuestionsCount = 5;
+                    for (int i = 0; i < oneGameQuestionsCount; i++) //Zaidimo 5 klausimu ciklas 
                     {
                         Dictionary<string, string> questionsDictionary = createQuestionsDictionary();
                         Dictionary<string, List<string>> optionsDictionary = createOptionsDictionary();
@@ -81,6 +85,10 @@ namespace _00Project1_Protmusis_
                         Dictionary<string, int> pointsDictionary = createPointsDictionary();
 
                         Console.Clear();
+                        Console.WriteLine($"---------------------------------------------------------------Current user: {currentUser}");
+                        Console.WriteLine($"---------------------------------------------------------------User points: {usersDictionary[currentUser]}");
+                        Console.WriteLine($"---------------------------------------------------------------Question: {i+1}/{oneGameQuestionsCount}");
+                        Console.WriteLine();
                         showQuestionsGenre();
                         string genreSelection = "";
                         string genreTopic = "";
@@ -99,7 +107,8 @@ namespace _00Project1_Protmusis_
 
                         int questionCount = questionsDictionary.Keys.Count(key => key.StartsWith(genreLetter));
                         int answeredQuestionsCount = answeredQuestions.Count(key => key.StartsWith(genreLetter));
-                        if (answeredQuestionsCount == questionCount)
+                        
+                        if (answeredQuestionsCount == questionCount) //Isekus klausimams is kategorijos metamas pranesimas
                         {
                             Console.WriteLine("Jusu pasirinkta kategorija nebeturi klausimu, prasome pasirinkti kita kategorija:");
                             genreSelection = Console.ReadLine();
@@ -110,49 +119,68 @@ namespace _00Project1_Protmusis_
                             genreLetter = numberToGenre(genreSelection);
                         }
 
+                        //Pasirenkamas random klausimas is pasirinktos kategorijos
                         Random rand = new Random();
-                        
-                        genreTopic = genreLetter + rand.Next(0, questionCount);
+                        genreTopic = genreLetter + rand.Next(1, questionCount+1);
 
+                        //Ciklas tikrinantis kad klausimai nesikartotu
                         while (answeredQuestions.Contains(genreTopic))
                         {
-                            genreTopic = genreLetter + rand.Next(0, questionCount);
+                            genreTopic = genreLetter + rand.Next(1, questionCount+1);
                         }
                         answeredQuestions.Add(genreTopic);
 
+                        //Parenkama visa reikalinga info apie klausima is dictionaries
                         string question = questionsDictionary[genreTopic];
-
                         List<string> options = optionsDictionary[genreTopic];
                         string answer = answersDictionary[genreTopic];
                         int questionPoint = pointsDictionary[genreTopic];
 
+                        //Parodomas klausimas ir galimi variantai
+                        Console.Clear();
+                        Console.WriteLine($"---------------------------------------------------------------Current user: {currentUser}");
+                        Console.WriteLine($"---------------------------------------------------------------User points: {usersDictionary[currentUser]}");
+                        Console.WriteLine($"---------------------------------------------------------------Question: {i+1}/{oneGameQuestionsCount}");
                         showQuestion(question);
-
                         showOptions(options);
 
+                        //Userio spejimas
                         string guess = Console.ReadLine().ToUpper();
 
                         int guessNumber = letterToNumber(guess);
                         Console.Clear();
 
+                        //Rodomas teisingas atsakymas
+                        Console.WriteLine($"---------------------------------------------------------------Current user: {currentUser}");
+                        Console.WriteLine($"---------------------------------------------------------------User points: {usersDictionary[currentUser]}");
+                        Console.WriteLine($"---------------------------------------------------------------Question: {i + 1}/{oneGameQuestionsCount}");
                         showQuestion(question);
                         bool correctAnswer = showAnswer(options, guessNumber, answer);
 
+                        if (correctAnswer == true)
+                        {
+                            oneGameCorrectAnswers += 1;
+                        }
+
+                        //Pridedami taskai
                         int pointForAnswer = calculatePoints(questionPoint, correctAnswer);
                         usersDictionary[currentUser] += pointForAnswer;
-
+                        oneGamePoints += pointForAnswer;
                         Console.ReadLine();
                     }
-
+                    Console.Clear();
+                    showOneGameResult(currentUser, usersDictionary, oneGamePoints, oneGameCorrectAnswers, oneGameQuestionsCount);
+                    Console.ReadLine();
                 }
 
             }
 
         }
-        public static void showMenu(string currentUser)
+        public static void showMenu(string currentUser, Dictionary<string, int> usersDictionary)
         {
-            Console.WriteLine($"------------------                          Prisijunges vartotojas: {currentUser}");
-            Console.WriteLine("Meniu:");
+            Console.WriteLine($"---------------------------------------------------------------Current user: {currentUser}");
+            Console.WriteLine($"---------------------------------------------------------------User points: {usersDictionary[currentUser]}");
+            Console.WriteLine("MENIU:");
             Console.WriteLine("1 - PRISIJUNGIMAS");
             Console.WriteLine("2 - ATSIJUNGIMAS");
             Console.WriteLine("3 - ZAIDIMO TAISYKLIU ATVAIZDAVIMAS");
@@ -177,10 +205,12 @@ namespace _00Project1_Protmusis_
             {
                 usersDictionary.Add(userName, 0);
                 Console.WriteLine("Jusu registracija sekminga, sveikiname prisijungus");
+                Thread.Sleep(1000);
             }
             else
             {
                 Console.WriteLine($"{firstName}, sveiki sugrize");
+                Thread.Sleep(1000);
             }
             currentUser = userName;
         }
@@ -194,8 +224,11 @@ namespace _00Project1_Protmusis_
                 back = Console.ReadLine();
             }
         }
-        public static void showGameRules()
+        public static void showGameRules(string currentUser, Dictionary<string, int> usersDictionary)
         {
+            Console.WriteLine($"---------------------------------------------------------------Current user: {currentUser}");
+            Console.WriteLine($"---------------------------------------------------------------User points: {usersDictionary[currentUser]}");
+            Console.WriteLine();
             Console.WriteLine("Sveikiname prsijungus prie protmusio programos");
             Console.WriteLine("TAISYKLES:");
             Console.WriteLine("1. Klasuimai yra suskirstyti i 4 kategorijas");
@@ -205,27 +238,26 @@ namespace _00Project1_Protmusis_
             Console.WriteLine("5. Atsakymui i klausima turesite pasirinkti is 4 pateiktu variantu");
             Console.WriteLine("6. Atsakius teisingai taskai uz atsakytus klausimus sumuosis ir gale zaidimo bus pateikti rezultatu lenteleje");
         }
-        public static void showGameResult(Dictionary<string, int> usersDictionary)
+        public static void showGameResult(Dictionary<string, int> usersDictionary, string currentUser)
         {
-            foreach (var user in usersDictionary)
-            {
-                Console.WriteLine("DALYVIU REZULTATAI:");
-                Console.WriteLine($"{user.Key} | {user.Value}");
-                //Reikia surusiuoti.........................
-            }
-
-            usersDictionary.OrderBy(x => x.Value);
+            Console.WriteLine($"---------------------------------------------------------------Current user: {currentUser}");
+            Console.WriteLine($"---------------------------------------------------------------User points: {usersDictionary[currentUser]}");
+            Console.WriteLine();
+            Console.WriteLine("DALYVIU REZULTATAI:");
 
             foreach (var user in usersDictionary)
             {
-                Console.WriteLine("DALYVIU REZULTATAI:");
                 Console.WriteLine($"{user.Key} | {user.Value}");
                 //Reikia surusiuoti.........................
             }
 
         }
-        public static void showUsers(Dictionary<string,int> usersDictionary)
+        public static void showUsers(Dictionary<string,int> usersDictionary, string currentUser)
         {
+            Console.WriteLine($"---------------------------------------------------------------Current user: {currentUser}");
+            Console.WriteLine($"---------------------------------------------------------------User points: {usersDictionary[currentUser]}");
+            Console.WriteLine();
+
             foreach (var user in usersDictionary)
             {
                 Console.WriteLine(user.Key);
@@ -303,7 +335,6 @@ namespace _00Project1_Protmusis_
 
         public static void showQuestion(string question)
         {
-            Console.Clear();
             Console.WriteLine(question);
             Console.WriteLine();
 
@@ -359,6 +390,16 @@ namespace _00Project1_Protmusis_
             {
                 return 0;
             }
+        }
+        public static void showOneGameResult(string currentUser, Dictionary<string, int> usersDictionary, int oneGamePoints, int OneGameCorrectAnswers, int oneGameQuestionsCount)
+        {
+            Console.WriteLine($"---------------------------------------------------------------Current user: {currentUser}");
+            Console.WriteLine($"---------------------------------------------------------------User points: {usersDictionary[currentUser]}");
+            Console.WriteLine();
+            Console.WriteLine($"JUSU REZULTATAS:");
+            Console.WriteLine($"1. Surinkta tasku: {oneGamePoints}");
+            Console.WriteLine($"2. Atsakyti teisingi klausimai: {OneGameCorrectAnswers}/{oneGameQuestionsCount}");
+            Console.WriteLine($"3. Visi turimi taskai: {usersDictionary[currentUser]}");
         }
 
 
